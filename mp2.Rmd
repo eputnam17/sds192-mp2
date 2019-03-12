@@ -68,3 +68,5 @@ ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label 
   geom_point(size = .5)
 
 ```
+
+#Eva finally joins
