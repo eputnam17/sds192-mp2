@@ -16,6 +16,7 @@ This project is so interesting and relevant to my life!
 library(tidyverse)
 library(dplyr)
 library(lubridate)
+library(scales)
 ```
 
 ```{r, message=FALSE}
@@ -30,13 +31,40 @@ load("contributions.rda")
 
 ```{r, message=FALSE}
 
+# Splits contributions into the date it occurred, transaction amount, and the the recipient's ID
 ContributionsToEach <- contributions %>%
-  select(transaction_dt, transaction_amt, cand_id)
-
-ContributionsToEach <- ContributionsToEach %>%
+  select(transaction_dt, transaction_amt, cand_id, name) %>%
+# The date format was weird and ineffective so this splits it into 3 columns, for year, month, and day. I used "lubridate" which should be part of tidyverse
   mutate(FullDate = mdy(transaction_dt)) %>%
   separate(FullDate, sep="-", into = c("year", "month", "day"))
 
-glimpse(ContributionsToEach)
+# There are some weird negative contribution amounts, which I assume are cancelled checks. We should do a better job removing those but it was really skewing the data so I removed the negative contributions and did calculations from here on with only postive contributions
+ContributionsToEachPositive <- ContributionsToEach %>%
+  filter(transaction_amt > 0)
+
+BigContributions2012 <- ContributionsToEachPositive %>%
+  filter(year == "2012") %>%
+  filter(transaction_amt > 3000000)
+
+glimpse(BigContributions2012)
 ```
 
+```{r, message=FALSE}
+# everything
+# I loaded the scales package, which should be in ggplot of tidyverse to make the tranaction amount be in dollers and not exponants
+ggplot(ContributionsToEachPositive, aes(x = transaction_dt, y = transaction_amt)) + 
+  scale_y_continuous(labels = dollar) +
+  geom_point()
+```
+
+```{r, message=FALSE}
+
+# just 2012 contributions on a log scale with text saying who donated each big donation.
+# Democrat = MUNDY KATOWITZ MEDIA, GMMB, . Republican = MENTZER MEDIA SERVICES,CROSSROADS MEDIA, NATIONAL MEDIA RESEARCH PLANNING(?), AMERICAN RAMBLER PRODUCTIONS,
+
+ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label = name)) +
+  scale_y_log10(labels = dollar) +
+  geom_text(size = 2) +
+  geom_point(size = .5)
+
+```
