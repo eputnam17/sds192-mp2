@@ -42,6 +42,15 @@ ContributionsToEach <- contributions %>%
 ContributionsToEachPositive <- ContributionsToEach %>%
   filter(transaction_amt > 0)
 
+#In progress: Remove cancelled donations
+#Cancellations <- ContributionsToEach %>%
+  #filter(transaction_amt < 0) 
+#ContributionsToEachClean <- ContributionsToEachPositive %>%
+  #filter(cand_id != [anything from Cancellations])
+
+  
+  
+
 BigContributions2012 <- ContributionsToEachPositive %>%
   filter(year == "2012") %>%
   filter(transaction_amt > 3000000)
