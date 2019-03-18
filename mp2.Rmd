@@ -1,16 +1,11 @@
 ---
 title: "Mini-Project 2"
-author: "Your Name Here"
+author: "Sarah, Berry, Eva"
 date: "2019-03-24"
 output: 
   html_document:
     code_folding: show
 ---
-
-## SARAH GILLESPIE TESSTTTTTT
-## Loading the data
-
-This project is so interesting and relevant to my life!
 
 ```{r, message=FALSE}
 library(tidyverse)
@@ -24,8 +19,9 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+devtools::install_github("benmarwick/wordcountaddin")
 ```
-#Berry says Hi!!!
+
 
 > Word count: `r wordcountaddin::word_count()`
 
@@ -63,8 +59,10 @@ glimpse(BigContributions2012)
 # I loaded the scales package, which should be in ggplot of tidyverse to make the tranaction amount be in dollers and not exponants
 ggplot(ContributionsToEachPositive, aes(x = transaction_dt, y = transaction_amt)) + 
   scale_y_continuous(labels = dollar) +
-  geom_point()
+  geom_point() +
+  labs(title = "Large Contributions in the 2012 Presidential Campaign")
 ```
+
 
 ```{r, message=FALSE}
 
@@ -74,8 +72,11 @@ ggplot(ContributionsToEachPositive, aes(x = transaction_dt, y = transaction_amt)
 ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label = name)) +
   scale_y_log10(labels = dollar) +
   geom_text(size = 2) +
-  geom_point(size = .5)
-
+  geom_point(size = .5) +
+  labs(title = "Top Contributers of the 2012 Presidential Campaign")
 ```
 
-#Eva finally joins
+#im just going to type up anything that sounds interesting or possibly relevent for our write up.Feelfree to edit any of it
+
+Although all United States presidential elections are unique, the 2011 – 2012 campaign data is particularly interesting. In addition to the first time in U.S. history that an African American incumbent president ran for re-election, this was the first election to occur after the 2010 Supreme Court opinion, Citizens United, which removed many of the restrictions regulating political campaign spending. 
+
