@@ -7,10 +7,6 @@ output:
     code_folding: show
 ---
 
-## SARAH GILLESPIE TESSTTTTTT
-## Loading the data
-
-This project is so interesting and relevant to my life!
 
 ```{r, message=FALSE}
 library(tidyverse)
@@ -25,7 +21,6 @@ load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
 ```
-#Berry says Hi!!!
 
 > Word count: `r wordcountaddin::word_count()`
 
@@ -77,5 +72,3 @@ ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label 
   geom_point(size = .5)
 
 ```
-
-#Eva finally joins
