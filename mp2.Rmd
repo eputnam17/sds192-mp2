@@ -29,7 +29,7 @@ devtools::install_github("benmarwick/wordcountaddin")
 
 # Splits contributions into the date it occurred, transaction amount, and the the recipient's ID
 ContributionsToEach <- contributions %>%
-  select(transaction_dt, transaction_amt, cand_id, name) %>%
+  select(transaction_dt, tran_id, transaction_amt, cand_id, name) %>%
 # The date format was weird and ineffective so this splits it into 3 columns, for year, month, and day. I used "lubridate" which should be part of tidyverse
   mutate(FullDate = mdy(transaction_dt)) %>%
   separate(FullDate, sep="-", into = c("year", "month", "day"))
@@ -38,14 +38,9 @@ ContributionsToEach <- contributions %>%
 ContributionsToEachPositive <- ContributionsToEach %>%
   filter(transaction_amt > 0)
 
-#In progress: Remove cancelled donations
-#Cancellations <- ContributionsToEach %>%
-  #filter(transaction_amt < 0) 
-#ContributionsToEachClean <- ContributionsToEachPositive %>%
-  #filter(cand_id != [anything from Cancellations])
-
-  
-  
+#Can we filter out cancelled transactions by filtering out any observation that has a non-unique tran_id? Let's look at contributions for one candidate who had a lot of cancelled donations:
+ContributionsToConyers <- ContributionsToEach %>% filter(cand_id == "H6MI01028")
+#No - because cancellations receive a unique tran_id. Looking at this dataset, there are many cases where I can't figure out which transaction matches with each cancellation, so I do not think it is possible to filter out cancelled donations with the information we have - we could filter out the negative transactions, but then we would still have the donations that were cancelled. 
 
 BigContributions2012 <- ContributionsToEachPositive %>%
   filter(year == "2012") %>%
@@ -56,7 +51,7 @@ glimpse(BigContributions2012)
 
 ```{r, message=FALSE}
 # everything
-# I loaded the scales package, which should be in ggplot of tidyverse to make the tranaction amount be in dollers and not exponants
+# I loaded the scales package, which should be in ggplot of tidyverse to make the transaction amount be in dollars and not exponents
 ggplot(ContributionsToEachPositive, aes(x = transaction_dt, y = transaction_amt)) + 
   scale_y_continuous(labels = dollar) +
   geom_point() +
@@ -73,7 +68,7 @@ ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label 
   scale_y_log10(labels = dollar) +
   geom_text(size = 2) +
   geom_point(size = .5) +
-  labs(title = "Top Contributers of the 2012 Presidential Campaign")
+  labs(title = "Top 50 Contributions to the 2012 Presidential Campaign", x = "transaction date", y = "transaction amount") 
 ```
 
 #im just going to type up anything that sounds interesting or possibly relevent for our write up.Feelfree to edit any of it
