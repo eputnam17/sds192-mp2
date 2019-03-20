@@ -81,6 +81,24 @@ ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label 
   labs(title = "Top 50 Contributions to the 2012 Presidential Campaign", x = "transaction date", y = "transaction amount") 
 ```
 
-#im just going to type up anything that sounds interesting or possibly relevent for our write up.Feelfree to edit any of it
+```{r, message=FALSE}
+# joining the tables (documentation; look for header of combine data sets at https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+# we care about how many contributions each candidate got. (or total money they got?)
+# we will find the number of intances the candidate ID shows up
+# count how many times the candidate ID appeared -> mutate that into a new collumn
+# join that collumn (based on candiate ID) to the main "candidates" column
+# in the end, we will have the original candidates spreadsheet and then two extra columns of number of individual contributions and total money donated to each candidate
+
+NewCandidates <- dplyr::left_join(candidates, contributions, by = "cand_id")
+
+# semi_join(a, b, by = "x1")
+
+CountNumberOfDonations <- NewCandidates %>%
+  dplyr::group_by(cand_name) %>%
+  dplyr::summarize(N = n())
+
+```
+
+#im just going to type up anything that sounds interesting or possibly relevent for our write up. Feel free to edit any of it
 
 Although all United States presidential elections are unique, the 2011 – 2012 campaign data is particularly interesting. In addition to the first time in U.S. history that an African American incumbent president ran for re-election, this was the first election to occur after the 2010 Supreme Court opinion, Citizens United, which removed many of the restrictions regulating political campaign spending. 
