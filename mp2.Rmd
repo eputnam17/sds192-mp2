@@ -76,6 +76,7 @@ ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label 
   labs(title = "Top Contributers of the 2012 Presidential Campaign")
 ```
 
+
 #im just going to type up anything that sounds interesting or possibly relevent for our write up.Feelfree to edit any of it
 
 Although all United States presidential elections are unique, the 2011 – 2012 campaign data is particularly interesting. In addition to the first time in U.S. history that an African American incumbent president ran for re-election, this was the first election to occur after the 2010 Supreme Court opinion, Citizens United, which removed many of the restrictions regulating political campaign spending. 
