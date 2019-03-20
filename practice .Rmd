@@ -1,0 +1,26 @@
+---
+title: "practice"
+author: "Berry Williams"
+date: "March 20, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE}
+library(tidyverse)
+library(dplyr)
+library(lubridate)
+library(scales)
+```
+
+```{r, message=FALSE}
+load("house_elections.rda")
+load("candidates.rda")
+load("committees.rda")
+load("contributions.rda")
+devtools::install_github("benmarwick/wordcountaddin")
+```
+
