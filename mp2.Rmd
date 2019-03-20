@@ -34,6 +34,10 @@ ContributionsToEach <- contributions %>%
   mutate(FullDate = mdy(transaction_dt)) %>%
   separate(FullDate, sep="-", into = c("year", "month", "day"))
 
+#add party variable
+ContributionsToEach$party <- ifelse(ContributionsToEach$name == "MUNDY KATOWITZ MEDIA, INC.," | ContributionsToEach$name == "GMMB", 
+c("Democrat"), c("Republican"))
+
 # There are some weird negative contribution amounts, which I assume are cancelled checks. We should do a better job removing those but it was really skewing the data so I removed the negative contributions and did calculations from here on with only postive contributions
 ContributionsToEachPositive <- ContributionsToEach %>%
   filter(transaction_amt > 0)
@@ -44,7 +48,11 @@ ContributionsToConyers <- ContributionsToEach %>% filter(cand_id == "H6MI01028")
 
 BigContributions2012 <- ContributionsToEachPositive %>%
   filter(year == "2012") %>%
-  filter(transaction_amt > 3000000)
+  filter(transaction_amt > 3000000) 
+  
+  #BigContributions2012$party <- ifelse(BigContributions2012$name == "MUNDY KATOWITZ MEDIA, INC.," | BigContributions2012$name == "GMMB", 
+#c("Democrat"), c("Republican"))
+    
 
 glimpse(BigContributions2012)
 ```
@@ -52,7 +60,8 @@ glimpse(BigContributions2012)
 ```{r, message=FALSE}
 # everything
 # I loaded the scales package, which should be in ggplot of tidyverse to make the transaction amount be in dollars and not exponents
-ggplot(ContributionsToEachPositive, aes(x = transaction_dt, y = transaction_amt)) + 
+ggplot(ContributionsToEachPositive, aes(x = transaction_dt, y = transaction_amt, color = party)) + 
+  scale_color_manual(values=c("#0000ff", "#ff0000")) +
   scale_y_continuous(labels = dollar) +
   geom_point() +
   labs(title = "Large Contributions in the 2012 Presidential Campaign")
@@ -64,7 +73,8 @@ ggplot(ContributionsToEachPositive, aes(x = transaction_dt, y = transaction_amt)
 # just 2012 contributions on a log scale with text saying who donated each big donation.
 # Democrat = MUNDY KATOWITZ MEDIA, GMMB, . Republican = MENTZER MEDIA SERVICES,CROSSROADS MEDIA, NATIONAL MEDIA RESEARCH PLANNING(?), AMERICAN RAMBLER PRODUCTIONS,
 
-ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label = name)) +
+ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label = name, color = party)) +
+  scale_color_manual(values=c("#0000ff", "#ff0000")) +
   scale_y_log10(labels = dollar) +
   geom_text(size = 2) +
   geom_point(size = .5) +
