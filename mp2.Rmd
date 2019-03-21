@@ -91,13 +91,34 @@ ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label 
 # join that collumn (based on candiate ID) to the main "candidates" column
 # in the end, we will have the original candidates spreadsheet and then two extra columns of number of individual contributions and total money donated to each candidate
 
-NewCandidates <- dplyr::left_join(candidates, contributions, by = "cand_id")
+# idk what I did but please please please don't delete "dplyr::" in these. It seems redundant but it's the only way it worked.
 
-# semi_join(a, b, by = "x1")
+CandidatesProfile <- dplyr::left_join(candidates, contributions, by = "cand_id")
 
-CountNumberOfDonations <- NewCandidates %>%
+# is below countig the number of times a candidates name shows up?
+CountNumberOfDonations <- CandidatesProfile %>%
   dplyr::group_by(cand_name) %>%
   dplyr::summarize(N = n())
+
+BabyTable <- CandidatesProfile %>%
+  dplyr::select(cand_id, cand_name, transaction_amt)
+
+# make a list c(whatever names) from babytable
+# I'm 50% sure that the code below produces a BIG list. 5524 house canidates seems about right
+
+listOfCand <- BabyTable %>%
+  dplyr::pull(cand_name)
+
+listOfCand <- unique(listOfCand)
+
+# sum up all teh donations for each name
+# here's the start of my function but idk where to go from here.
+# my goals are to 1) confirm it was a sucessful list 2) sum up the money per candidate using the list
+
+MoneyPerCandidate <- function(cand_id) {
+  Money <- BabyTable$cand_id
+  Money
+}
 
 ```
 
