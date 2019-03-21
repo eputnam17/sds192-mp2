@@ -109,15 +109,15 @@ BabyTable <- CandidatesProfile %>%
 listOfCand <- BabyTable %>%
   dplyr::pull(cand_name)
 
-listOfCand <- unique(listOfCand)
+Cands <- unique(listOfCand)
 
 # sum up all teh donations for each name
 # here's the start of my function but idk where to go from here.
 # my goals are to 1) confirm it was a sucessful list 2) sum up the money per candidate using the list
 
-MoneyPerCandidate <- function(cand_id) {
-  Money <- BabyTable$cand_id
-  Money
+FindsMoneyPerCandidate <- function(Cands) {
+  money <- dplyr::cumsum(transaction_amt)
+  return(money)
 }
 
 ```
