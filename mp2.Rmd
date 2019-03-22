@@ -11,6 +11,7 @@ output:
 ```{r, message=FALSE}
 library(tidyverse)
 library(dplyr)
+library(ggplot2)
 library(ggrepel)
 library(lubridate)
 library(scales)
@@ -31,14 +32,13 @@ devtools::install_github("benmarwick/wordcountaddin")
 # Splits contributions into the date it occurred, transaction amount, and the the recipient's ID
 ContributionsToEach <- contributions %>%
   select(transaction_dt, tran_id, transaction_amt, cand_id, name) %>%
-# The date format was weird and ineffective so this splits it into 3 columns, for year, month, and day. I used "lubridate" which should be part of tidyverse
+    # The date format was weird and ineffective so this splits it into 3 columns, for year, month, and day. I used "lubridate" which should be part of tidyverse
   mutate(FullDate = mdy(transaction_dt)) %>%
   separate(FullDate, sep="-", into = c("year", "month", "day"))
 
-#add party variable
+#add party variable  
 ContributionsToEach$party <- ifelse(ContributionsToEach$name == "MUNDY KATOWITZ MEDIA, INC.," | ContributionsToEach$name == "GMMB", 
 c("Democrat"), c("Republican"))
-
 
 #Can we filter out cancelled transactions by filtering out any observation that has a non-unique tran_id? Let's look at contributions for one candidate who had a lot of cancelled donations:
 ContributionsToConyers <- ContributionsToEach %>% filter(cand_id == "H6MI01028")
@@ -46,11 +46,13 @@ ContributionsToConyers <- ContributionsToEach %>% filter(cand_id == "H6MI01028")
 
 BigContributions2012 <- ContributionsToEach %>%
   filter(year == "2012") %>%
-  filter(transaction_amt > 3000000) 
-  
-BigContributions2012$party <- ifelse(BigContributions2012$name == "MUNDY KATOWITZ MEDIA, INC.," | BigContributions2012$name == "GMMB", 
-c("Democrat"), c("Republican"))
-    
+  filter(transaction_amt > 3000000)
+
+
+```
+ 
+ 
+```{r}
 
 glimpse(BigContributions2012)
 ```
@@ -58,13 +60,12 @@ glimpse(BigContributions2012)
 ```{r, message=FALSE}
 # everything
 # I loaded the scales package, which should be in ggplot of tidyverse to make the transaction amount be in dollars and not exponents
-ggplot(ContributionsToEach, aes(x = transaction_dt, y = transaction_amt, color = party)) + 
+ggplot(ContributionsToEach, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = transaction_amt, color = party)) + 
   scale_color_manual(values=c("#0000ff", "#ff0000")) +
   scale_y_continuous(labels = dollar) +
   geom_point() +
   labs(title = "Large Contributions in the 2012 Presidential Campaign", y = "transaction amount", x = "transaction date") +
-scale_x_discrete(breaks = c(01012012, 02012012, 03012012, 04012012, 05012012, 06012012, 07012012, 08012012, 09012012, 10012012, 11012012, 12012012, 12312012),
-  labels = c("Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec", " ")) 
+scale_x_date()
 ```
 
 
@@ -73,14 +74,13 @@ scale_x_discrete(breaks = c(01012012, 02012012, 03012012, 04012012, 05012012, 06
 # just 2012 contributions on a log scale with text saying who donated each big donation.
 # Democrat = MUNDY KATOWITZ MEDIA, GMMB, . Republican = MENTZER MEDIA SERVICES,CROSSROADS MEDIA, NATIONAL MEDIA RESEARCH PLANNING(?), AMERICAN RAMBLER PRODUCTIONS,
 
-ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label = name, color = party)) +
+ggplot(BigContributions2012, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = transaction_amt, label = name, color = party)) +
   scale_color_manual(values=c("#0000ff", "#ff0000")) +
   scale_y_log10(labels = dollar) +
   geom_text_repel(size = 2) +
   geom_point(size = .5) +
-  labs(title = "Top 50 Contributions to the 2012 Presidential Campaign", x = "transaction date", y = "transaction amount") +
-  scale_x_discrete(breaks = c(01012012, 02012012, 03012012, 04012012, 05012012, 06012012, 07012012, 08012012, 09012012, 10012012, 11012012, 12012012),
-  labels = c("Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec")) 
+  labs(title = "Top 50 Presidential Compaign Contributions of 2012", x = "month", y = "transaction amount") +
+  scale_x_date(breaks = "month", labels = month.abb)
 ```
 
 ```{r, message=FALSE}
