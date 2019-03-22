@@ -27,6 +27,7 @@ devtools::install_github("benmarwick/wordcountaddin")
 
 > Word count: `r wordcountaddin::word_count()`
 
+
 ```{r, message=FALSE}
 
 # Splits contributions into the date it occurred, transaction amount, and the the recipient's ID
@@ -64,7 +65,7 @@ ggplot(ContributionsToEach, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = trans
   scale_color_manual(values=c("#0000ff", "#ff0000")) +
   scale_y_continuous(labels = dollar) +
   geom_point() +
-  labs(title = "Large Contributions in the 2012 Presidential Campaign", y = "transaction amount", x = "transaction date") +
+  labs(title = "Large Contributions in the 2012 House Election", y = "transaction amount", x = "transaction date") +
 scale_x_date()
 ```
 
@@ -79,7 +80,7 @@ ggplot(BigContributions2012, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = tran
   scale_y_log10(labels = dollar) +
   geom_text_repel(size = 2) +
   geom_point(size = .5) +
-  labs(title = "Top 50 Presidential Compaign Contributions of 2012", x = "month", y = "transaction amount") +
+  labs(title = "Top 50 House Election Contributions of 2012", x = "month", y = "transaction amount") +
   scale_x_date(breaks = "month", labels = month.abb)
 ```
 
@@ -111,9 +112,8 @@ listOfCand <- BabyTable %>%
 
 Cands <- unique(listOfCand)
 
-# sum up all teh donations for each name
 # here's the start of my function but idk where to go from here.
-# my goals are to 1) confirm it was a sucessful list 2) sum up the money per candidate using the list
+# my GOAL are to 1) confirm it was a sucessful list 2) sum up the money per candidate using the list
 
 FindsMoneyPerCandidate <- function(Cands) {
   money <- dplyr::cumsum(transaction_amt)
@@ -133,9 +133,11 @@ ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label 
   scale_y_log10(labels = dollar) +
   geom_text(size = 2) +
   geom_point(size = .5) +
-  labs(title = "Top 50 Contributions to the 2012 Presidential Campaign", x = "transaction date", y = "transaction amount") +
+  labs(title = "Top 50 Contributions to the 2012 House Election", x = "transaction date", y = "transaction amount") +
 scale_x_discrete(breaks = c(01012012, 02012012, 03012012, 04012012, 05012012, 06012012, 07012012, 08012012, 09012012, 10012012, 11012012, 12012012),
   labels = c("Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"))
 
 ```
 
+^[[Github Repository](https://github.com/eputnam17/sds192-mp2)
+]
