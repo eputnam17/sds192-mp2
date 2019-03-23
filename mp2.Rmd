@@ -82,21 +82,7 @@ ggplot(BigContributions2012, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = tran
   scale_x_date(breaks = "month", labels = month.abb)
 ```
 
-```{r, message=FALSE}
 
-# only 2012 contributions on a log scale with text saying who donated each big donation.
-# Democrat = MUNDY KATOWITZ MEDIA, GMMB, . Republican = MENTZER MEDIA SERVICES,CROSSROADS MEDIA, NATIONAL MEDIA RESEARCH PLANNING(?), AMERICAN RAMBLER PRODUCTIONS,
-
-ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label = name, color = party)) +
-  scale_color_manual(values=c("#0000ff","#ff0000")) +
-  scale_y_log10(labels = dollar) +
-  geom_text(size = 2) +
-  geom_point(size = .5) +
-  labs(title = "Top 50 Contributions to the 2012 Election", x = "transaction date", y = "transaction amount") +
-scale_x_discrete(breaks = c(01012012, 02012012, 03012012, 04012012, 05012012, 06012012, 07012012, 08012012, 09012012, 10012012, 11012012, 12012012),
-  labels = c("Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"))
-
-```
 
 ```{r, message=FALSE}
 
@@ -130,6 +116,25 @@ MoneyPerCandidate <- function(name_id) {
 MoneyPerCandidate("P80003338")
 MoneyPerCandidate("P80003353")
 MoneyPerCandidate("H0NY04065")
+
+
+#whos who is literally just to join the dataframes
+WhosWho <- candidates %>%
+  dplyr::select(cand_id, cand_name, cand_party_affiliation)
+
+CountNumberOfDonations <- merge(WhosWho, CountNumberOfDonations, by="cand_name")
+  
+# lets make a ggplot to see what candidate recieved the most (individual not total dollar) donations
+
+ManyDonations <- CountNumberOfDonations %>%
+  dplyr::filter(N > 1500)
+
+ggplot(ManyDonations, aes(x = cand_name, y = N, fill = cand_party_affiliation)) +
+  scale_color_manual(values=c("#0000ff","#ff0000")) +
+  geom_bar(stat="identity") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Most Individual Donations to a Candidate")
+
 
 ```
 
