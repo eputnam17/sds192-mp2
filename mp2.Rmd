@@ -74,7 +74,7 @@ scale_x_date()
 # A ggplot 2012 contributions on a log scale with text saying who donated each big donation.
 
 ggplot(BigContributions2012, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = transaction_amt, label = name, color = party)) +
-  scale_color_manual(values=c("#ff0000", "#0000ff")) +
+  scale_color_manual(values=c( "#0000ff","#ff0000")) +
   scale_y_log10(labels = dollar) +
   geom_text_repel(size = 2) +
   geom_point(size = .5) +
@@ -88,7 +88,7 @@ ggplot(BigContributions2012, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = tran
 # Democrat = MUNDY KATOWITZ MEDIA, GMMB, . Republican = MENTZER MEDIA SERVICES,CROSSROADS MEDIA, NATIONAL MEDIA RESEARCH PLANNING(?), AMERICAN RAMBLER PRODUCTIONS,
 
 ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label = name, color = party)) +
-  scale_color_manual(values=c("#0000ff", "#ff0000")) +
+  scale_color_manual(values=c("#0000ff","#ff0000")) +
   scale_y_log10(labels = dollar) +
   geom_text(size = 2) +
   geom_point(size = .5) +
