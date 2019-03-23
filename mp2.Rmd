@@ -61,7 +61,7 @@ ggplot(ContributionsToEach, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = trans
   scale_color_manual(values=c("#0000ff", "#ff0000")) +
   scale_y_continuous(labels = dollar) +
   geom_point() +
-  labs(title = "Large Contributions in the 2012 Election", y = "transaction amount", x = "transaction date") +
+  labs(title = "Increased Contributions in the 2012 Election", y = "transaction amount", x = "transaction date") +
 scale_x_date()
 ```
 
