@@ -108,18 +108,26 @@ BabyTable <- CandidatesProfile %>%
 # I'm 50% sure that the code below produces a BIG list. 5524 house canidates seems about right
 
 listOfCand <- BabyTable %>%
-  dplyr::pull(cand_name)
+  dplyr::pull(cand_id)
 
 Cands <- unique(listOfCand)
 
 # here's the start of my function but idk where to go from here.
 # my GOAL are to 1) confirm it was a sucessful list 2) sum up the money per candidate using the list
 
-FindsMoneyPerCandidate <- function(Cands) {
-  money <- dplyr::cumsum(transaction_amt)
-  return(money)
+MoneyPerCandidate <- function(name_id) {
+  BabyTable %>%
+    dplyr::filter(cand_id == name_id) %>%
+    dplyr::filter(!is.na(transaction_amt)) %>%
+    dplyr::arrange(transaction_amt) %>%
+    dplyr::summarize(total = sum(transaction_amt))
+#  return(total)
 }
 
+# the numeric value that these function calls produce is the total $ that was given to each house candidate
+MoneyPerCandidate("H0AL02087")
+MoneyPerCandidate("H2GA09143")
+MoneyPerCandidate("H0NY04065")
 ```
 
 
