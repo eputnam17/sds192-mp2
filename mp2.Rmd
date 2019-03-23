@@ -85,6 +85,22 @@ ggplot(BigContributions2012, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = tran
 ```
 
 ```{r, message=FALSE}
+
+# just 2012 contributions on a log scale with text saying who donated each big donation.
+# Democrat = MUNDY KATOWITZ MEDIA, GMMB, . Republican = MENTZER MEDIA SERVICES,CROSSROADS MEDIA, NATIONAL MEDIA RESEARCH PLANNING(?), AMERICAN RAMBLER PRODUCTIONS,
+
+ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label = name, color = party)) +
+  scale_color_manual(values=c("#0000ff", "#ff0000")) +
+  scale_y_log10(labels = dollar) +
+  geom_text(size = 2) +
+  geom_point(size = .5) +
+  labs(title = "Top 50 Contributions to the 2012 House Election", x = "transaction date", y = "transaction amount") +
+scale_x_discrete(breaks = c(01012012, 02012012, 03012012, 04012012, 05012012, 06012012, 07012012, 08012012, 09012012, 10012012, 11012012, 12012012),
+  labels = c("Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"))
+
+```
+
+```{r, message=FALSE}
 # joining the tables (documentation; look for header of combine data sets at https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
 # we care about how many contributions each candidate got. (or total money they got?)
 # we will find the number of intances the candidate ID shows up
@@ -128,24 +144,18 @@ MoneyPerCandidate <- function(name_id) {
 MoneyPerCandidate("H0AL02087")
 MoneyPerCandidate("H2GA09143")
 MoneyPerCandidate("H0NY04065")
+
+#iterate over items in list
+
+fruit <- c(Cands)
+# Create the for statement
+for ( i in fruit){ 
+  x = MoneyPerCandidate(i)
+  print(x)
+}
 ```
 
 
-```{r, message=FALSE}
-
-# just 2012 contributions on a log scale with text saying who donated each big donation.
-# Democrat = MUNDY KATOWITZ MEDIA, GMMB, . Republican = MENTZER MEDIA SERVICES,CROSSROADS MEDIA, NATIONAL MEDIA RESEARCH PLANNING(?), AMERICAN RAMBLER PRODUCTIONS,
-
-ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label = name, color = party)) +
-  scale_color_manual(values=c("#0000ff", "#ff0000")) +
-  scale_y_log10(labels = dollar) +
-  geom_text(size = 2) +
-  geom_point(size = .5) +
-  labs(title = "Top 50 Contributions to the 2012 House Election", x = "transaction date", y = "transaction amount") +
-scale_x_discrete(breaks = c(01012012, 02012012, 03012012, 04012012, 05012012, 06012012, 07012012, 08012012, 09012012, 10012012, 11012012, 12012012),
-  labels = c("Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"))
-
-```
 
 ^[[Github Repository](https://github.com/eputnam17/sds192-mp2)
 ]
