@@ -1,6 +1,6 @@
 ---
 title: "Mini-Project 2"
-author: "Sarah, Berry, Eva"
+author: "Sarah Gillespie, Berry Williams, Eva Putman"
 date: "2019-03-24"
 output: 
   html_document:
@@ -30,63 +30,61 @@ devtools::install_github("benmarwick/wordcountaddin")
 
 ```{r, message=FALSE}
 
-# Splits contributions into the date it occurred, transaction amount, and the the recipient's ID
+# Splits contributions into the date the contribution occurred, transaction amount, and the the recipient's ID
+
 ContributionsToEach <- contributions %>%
-  select(transaction_dt, tran_id, transaction_amt, cand_id, name) %>%
-    # The date format was weird and ineffective so this splits it into 3 columns, for year, month, and day. I used "lubridate" which should be part of tidyverse
-  mutate(FullDate = mdy(transaction_dt)) %>%
+  dplyr::select(transaction_dt, tran_id, transaction_amt, cand_id, name) %>%
+  # The date format was weird and ineffective so this splits it into 3 columns, for year, month, and day. I used "lubridate" which should be part of tidyverse
+  
+  dplyr::mutate(FullDate = mdy(transaction_dt)) %>%
   separate(FullDate, sep="-", into = c("year", "month", "day"))
 
-#add party variable  
+#add party variable
+
 ContributionsToEach$party <- ifelse(ContributionsToEach$name == "MUNDY KATOWITZ MEDIA, INC.," | ContributionsToEach$name == "GMMB", 
 c("Democrat"), c("Republican"))
-
-#Can we filter out cancelled transactions by filtering out any observation that has a non-unique tran_id? Let's look at contributions for one candidate who had a lot of cancelled donations:
-ContributionsToConyers <- ContributionsToEach %>% filter(cand_id == "H6MI01028")
-#No - because cancellations receive a unique tran_id. Looking at this dataset, there are many cases where I can't figure out which positive transaction each negative one is cancelling, because there is nothing linking them.  
 
 BigContributions2012 <- ContributionsToEach %>%
   filter(year == "2012") %>%
   filter(transaction_amt > 3000000)
-
-
 ```
  
  
 ```{r}
-
 glimpse(BigContributions2012)
 ```
 
 ```{r, message=FALSE}
-# everything
 # I loaded the scales package, which should be in ggplot of tidyverse to make the transaction amount be in dollars and not exponents
+
 ggplot(ContributionsToEach, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = transaction_amt, color = party)) + 
   scale_color_manual(values=c("#0000ff", "#ff0000")) +
   scale_y_continuous(labels = dollar) +
   geom_point() +
-  labs(title = "Large Contributions in the 2012 House Election", y = "transaction amount", x = "transaction date") +
+  labs(title = "Large Contributions in the 2012 Election", y = "transaction amount", x = "transaction date") +
 scale_x_date()
 ```
 
 
 ```{r, message=FALSE}
 
-# just 2012 contributions on a log scale with text saying who donated each big donation.
+# We had to web search to verify the party alignment of each major media company
 # Democrat = MUNDY KATOWITZ MEDIA, GMMB, . Republican = MENTZER MEDIA SERVICES,CROSSROADS MEDIA, NATIONAL MEDIA RESEARCH PLANNING(?), AMERICAN RAMBLER PRODUCTIONS,
 
+# A ggplot 2012 contributions on a log scale with text saying who donated each big donation.
+
 ggplot(BigContributions2012, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = transaction_amt, label = name, color = party)) +
-  scale_color_manual(values=c("#0000ff", "#ff0000")) +
+  scale_color_manual(values=c("#ff0000", "#0000ff")) +
   scale_y_log10(labels = dollar) +
   geom_text_repel(size = 2) +
   geom_point(size = .5) +
-  labs(title = "Top 50 House Election Contributions of 2012", x = "month", y = "transaction amount") +
+  labs(title = "Top 50 Election Contributions of 2012", x = "month", y = "transaction amount") +
   scale_x_date(breaks = "month", labels = month.abb)
 ```
 
 ```{r, message=FALSE}
 
-# just 2012 contributions on a log scale with text saying who donated each big donation.
+# only 2012 contributions on a log scale with text saying who donated each big donation.
 # Democrat = MUNDY KATOWITZ MEDIA, GMMB, . Republican = MENTZER MEDIA SERVICES,CROSSROADS MEDIA, NATIONAL MEDIA RESEARCH PLANNING(?), AMERICAN RAMBLER PRODUCTIONS,
 
 ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label = name, color = party)) +
@@ -94,42 +92,30 @@ ggplot(BigContributions2012, aes(x = transaction_dt, y = transaction_amt, label 
   scale_y_log10(labels = dollar) +
   geom_text(size = 2) +
   geom_point(size = .5) +
-  labs(title = "Top 50 Contributions to the 2012 House Election", x = "transaction date", y = "transaction amount") +
+  labs(title = "Top 50 Contributions to the 2012 Election", x = "transaction date", y = "transaction amount") +
 scale_x_discrete(breaks = c(01012012, 02012012, 03012012, 04012012, 05012012, 06012012, 07012012, 08012012, 09012012, 10012012, 11012012, 12012012),
   labels = c("Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"))
 
 ```
 
 ```{r, message=FALSE}
-# joining the tables (documentation; look for header of combine data sets at https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
-# we care about how many contributions each candidate got. (or total money they got?)
-# we will find the number of intances the candidate ID shows up
-# count how many times the candidate ID appeared -> mutate that into a new collumn
-# join that collumn (based on candiate ID) to the main "candidates" column
-# in the end, we will have the original candidates spreadsheet and then two extra columns of number of individual contributions and total money donated to each candidate
 
 # idk what I did but please please please don't delete "dplyr::" in these. It seems redundant but it's the only way it worked.
 
+# this joins the original candidates and contributions tables based on being linked by the unique candidate ID
+
 CandidatesProfile <- dplyr::left_join(candidates, contributions, by = "cand_id")
 
-# is below countig the number of times a candidates name shows up?
 CountNumberOfDonations <- CandidatesProfile %>%
+  dplyr::select(cand_id, cand_name) %>%
   dplyr::group_by(cand_name) %>%
-  dplyr::summarize(N = n())
+  dplyr::summarize(N = n()) %>%
+  dplyr::distinct()
 
 BabyTable <- CandidatesProfile %>%
   dplyr::select(cand_id, cand_name, transaction_amt)
 
-# make a list c(whatever names) from babytable
-# I'm 50% sure that the code below produces a BIG list. 5524 house canidates seems about right
-
-listOfCand <- BabyTable %>%
-  dplyr::pull(cand_id)
-
-Cands <- unique(listOfCand)
-
-# here's the start of my function but idk where to go from here.
-# my GOAL are to 1) confirm it was a sucessful list 2) sum up the money per candidate using the list
+# the numeric value that these function  produces is the total $ that was given to each house candidate. Find it by putting in the individual's candidate ID.
 
 MoneyPerCandidate <- function(name_id) {
   BabyTable %>%
@@ -140,21 +126,12 @@ MoneyPerCandidate <- function(name_id) {
 #  return(total)
 }
 
-# the numeric value that these function calls produce is the total $ that was given to each house candidate
-MoneyPerCandidate("H0AL02087")
-MoneyPerCandidate("H2GA09143")
+#pick your candidate. Enter his or her ID.
+MoneyPerCandidate("P80003338")
+MoneyPerCandidate("P80003353")
 MoneyPerCandidate("H0NY04065")
 
-#iterate over items in list
-
-fruit <- c(Cands)
-# Create the for statement
-for ( i in fruit){ 
-  x = MoneyPerCandidate(i)
-  print(x)
-}
 ```
-
 
 
 ^[[Github Repository](https://github.com/eputnam17/sds192-mp2)
