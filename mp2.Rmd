@@ -27,6 +27,7 @@ devtools::install_github("benmarwick/wordcountaddin")
 
 > Word count: `r wordcountaddin::word_count()`
 
+##### During the 2011 - 2012 election cycle, campaign donations increased significantly compared to previous years, including the top 50 contributions made by only six organizations, the majority of which supported the Republican candidate. 
 
 ```{r, message=FALSE}
 
@@ -50,10 +51,6 @@ BigContributions2012 <- ContributionsToEach %>%
 ```
  
  
-```{r}
-glimpse(BigContributions2012)
-```
-
 ```{r, message=FALSE}
 # I loaded the scales package, which should be in ggplot of tidyverse to make the transaction amount be in dollars and not exponents
 
@@ -65,6 +62,7 @@ ggplot(ContributionsToEach, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = trans
 scale_x_date()
 ```
 
+###### In the above figure, *Increased Contributions in the 2012 Election*, the data shows a large increase in the overall contributions, particularly toward the Republican campaign during the 2012 election. 
 
 ```{r, message=FALSE}
 
@@ -82,11 +80,21 @@ ggplot(BigContributions2012, aes(x = as.Date(transaction_dt, "%m%d%Y"), y = tran
   scale_x_date(breaks = "month", labels = month.abb)
 ```
 
+###### This graphic, *Top 50 Election Contributions of 2012*, also indicates the name of the organization that made the contribution, illustrating that not only were there far more large contributions to the Republican campaign, but many of those contributions had a far greater monetary value.
+
+###### Although each United States presidential election is distinctive, the 2011 – 2012 campaign data is particularly interesting. In addition to the first time in U.S. history that an African American incumbent president ran for re-election, this was the first election to occur after the 2010 Supreme Court opinion, Citizens United, which removed many of the restrictions regulating political campaign spending. These updated spending guidelines may have had an impact on the large contributors during the election period. The graphics above show data pertaining to the top 50 contributors during the 2011 - 2012 election. The organizations represented in these figures are ‘media’ groups, which focus primarily on purchasing air time and advertising strategies. 
+###### Of the top six donors in this election, only two contributed to the Democratic candidate, Barack Obama’s campaign. 
+###### [GMMB](https://gmmb.com), a Washington based media company, describes itself as “an agency on a mission: to cause the effect”. Its website lists as services “movement building”, “advertising”, “creative content”, “brand strategy”, and “public relations”. 
+###### [Mundy Katowitz Media](http://munkato.com/who-we-are.html), Inc was founded by Carole Mundy and Janet Katowitz as “a media buying firm that combines campaign expertise with a Madison Avenue media edge”, according to the firm’s website. Publicintegrity.org reports that “Its top client during the 2012 election was Priorities USA Action, the super PAC supporting President Barack Obama’s re-election”. During a 2004 speech at American University, Janet Katowitz described the business of media buying as “shrouded in mystery” and “it’s a very lucrative industry.”
+###### The remaining four contributors supported the Republican candidate, Mitt Romney’s presidential campaign. 
+###### [Mentzer Media Services](https://www.sourcewatch.org/index.php/Mentzer_Media_Services) is a company that conducted business with the vast majority of major conservative super PACs during the 2012 election. Their largest client in 2012 was a super PAC called Restore Our Future, which was affiliated with the presidential campaign of Mitt Romney. The primary service this company provided was the purchasing of air time, used to run either promotional advertisements for the Romney campaign or attack ads for the Obama campaign.  In addition to the $190 million in ad purchases for Restore Our Future, the company handled over $60 million in ad buys for several smaller right-wing groups during the election cycle. 
+###### [Crossroads Media (CRM)](http://www.crossroadsmedia.tv/who-we-are.php), an Alexandria, VA based company, prides themselves as “the premiere Republican media services firm” and specializes in advertisement strategies. The company provides target audience research using demographics, polling data, historic voting patterns, lifestyle characteristics, and other indicators to “hone in on target audiences”. This organization provides clients with opposing candidate media updates and constant monitoring of relevant broadcast, cable, radio, online and out-of-home advertising trends as well as the traditional purchase of air time. 
+###### [American Rambler Productions](https://www.washingtonpost.com/politics/decision2012/private-consultants-see-huge-election-profits/2012/11/10/edaab580-29d8-11e2-96b6-8e6a7524553f_story.html?utm_term=.742de92f67a2) was an “ad hoc umbrella consultancy”, created for the Romney 2012 campaign, which handled a variety of functions including purchasing air time and creating advertisements.  Throughout the span of the campaign, the organization was paid $241 million toward their efforts. 
+###### The [National Media Research Planning and Placement] LLC(https://www.npr.org/2012/09/17/161289850/6-quirky-tie-ins-to-the-2012-election), specializes in media planning and budgeting, buy management, ad tracking and post-campaign reconciliation services. The company offers research-driven media planning and claims that their use of current “data, research and proprietary analytics” provides clients with a significant advantage over their opposition. 
+###### This data provides insight into the spending priorities during presidential campaigns. The largest donors were all media affiliated groups representing super PACs and other large contributors. Based on this data, the primary focus for campaign spending is to promote name recognition of candidates as much as possible through various media avenues. 
 
 
 ```{r, message=FALSE}
-
-# idk what I did but please please please don't delete "dplyr::" in these. It seems redundant but it's the only way it worked.
 
 # this joins the original candidates and contributions tables based on being linked by the unique candidate ID
 
@@ -97,26 +105,6 @@ CountNumberOfDonations <- CandidatesProfile %>%
   dplyr::group_by(cand_name) %>%
   dplyr::summarize(N = n()) %>%
   dplyr::distinct()
-
-BabyTable <- CandidatesProfile %>%
-  dplyr::select(cand_id, cand_name, transaction_amt)
-
-# the numeric value that these function  produces is the total $ that was given to each house candidate. Find it by putting in the individual's candidate ID.
-
-MoneyPerCandidate <- function(name_id) {
-  BabyTable %>%
-    dplyr::filter(cand_id == name_id) %>%
-    dplyr::filter(!is.na(transaction_amt)) %>%
-    dplyr::arrange(transaction_amt) %>%
-    dplyr::summarize(total = sum(transaction_amt))
-#  return(total)
-}
-
-#pick your candidate. Enter his or her ID.
-MoneyPerCandidate("P80003338")
-MoneyPerCandidate("P80003353")
-MoneyPerCandidate("H0NY04065")
-
 
 #whos who is literally just to join the dataframes
 WhosWho <- candidates %>%
@@ -135,8 +123,38 @@ ggplot(ManyDonations, aes(x = cand_name, y = N, fill = cand_party_affiliation)) 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(title = "Most Individual Donations to a Candidate")
 
+```
+
+######  The third figure, *Most Individual Donations to a Candidate*, illustrates that the most individual donations were in support of either Barack Obama or Mitt Romney, who were both nominated for the 2012 election. 
+
+
+
+```{r, message=FALSE}
+
+
+
+BabyTable <- CandidatesProfile %>%
+  dplyr::select(cand_id, cand_name, transaction_amt)
+
+# the numeric value that these function  produces is the total $ that was given to each house candidate. Find it by putting in the individual's candidate ID.
+
+
+MoneyPerCandidate <- function(name_id) {
+  BabyTable %>%
+    dplyr::filter(cand_id == name_id) %>%
+    dplyr::filter(!is.na(transaction_amt)) %>%
+    dplyr::arrange(transaction_amt) %>%
+    dplyr::summarize(total = sum(transaction_amt))
+#  return(total)
+}
+
+#pick your candidate. Enter his or her ID.
+MoneyPerCandidate("P80003338")
+MoneyPerCandidate("P80003353")
+MoneyPerCandidate("H0NY04065")
 
 ```
+
 
 
 ^[[Github Repository](https://github.com/eputnam17/sds192-mp2)
