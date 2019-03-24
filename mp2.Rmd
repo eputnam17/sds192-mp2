@@ -130,7 +130,7 @@ ManyDonations <- CountNumberOfDonations %>%
   dplyr::filter(N > 1500)
 
 ggplot(ManyDonations, aes(x = cand_name, y = N, fill = cand_party_affiliation)) +
-  scale_color_manual(values=c("#0000ff","#ff0000")) +
+  scale_fill_manual(values=c("#0000ff","#ff0000")) +
   geom_bar(stat="identity") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(title = "Most Individual Donations to a Candidate")
